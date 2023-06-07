@@ -15,30 +15,28 @@ import application.model.GeneroRepository;
 @Controller
 @RequestMapping("/genero")
 public class GeneroController {
-
     @Autowired
     private GeneroRepository generoRepo;
-    
+
     @RequestMapping("/list")
     public String list(Model model) {
-        model.addAttribute("livros", generoRepo.findAll());
-        return "/livro/list";
+        model.addAttribute("generos", generoRepo.findAll());
+        return "/genero/list";
     }
 
     @RequestMapping("/insert")
     public String insert() {
         return "/genero/insert";
     }
-    
+
     @RequestMapping(value = "/insert", method = RequestMethod.POST)
-    public String insert(
-        @RequestParam("titulo") String titulo,
-        @RequestParam("isbn") String isbn) {
+    public String insert(@RequestParam("nome") String nome) {
         Genero genero = new Genero();
-        genero.setTitulo(titulo);
+        genero.setNome(nome);
 
         generoRepo.save(genero);
-        return "redirect:/livro/list";
+
+        return "redirect:/genero/list";
     }
 
     @RequestMapping("/update")
@@ -46,7 +44,7 @@ public class GeneroController {
         Optional<Genero> genero = generoRepo.findById(id);
 
         if(genero.isPresent()) {
-            model.addAttribute("livro", genero.get());
+            model.addAttribute("genero", genero.get());
             return "/genero/update";
         }
 
@@ -56,15 +54,16 @@ public class GeneroController {
     @RequestMapping(value = "/update", method = RequestMethod.POST)
     public String update(
         @RequestParam("id") int id,
-        @RequestParam("titulo") String titulo,
-        @RequestParam("isbn") String isbn) {
+        @RequestParam("nome") String nome
+    ) {
         Optional<Genero> genero = generoRepo.findById(id);
 
         if(genero.isPresent()) {
-            genero.get().setTitulo(titulo);
+            genero.get().setNome(nome);
+
             generoRepo.save(genero.get());
         }
-
+        
         return "redirect:/genero/list";
     }
 
@@ -86,5 +85,4 @@ public class GeneroController {
 
         return "redirect:/genero/list";
     }
-
 }
